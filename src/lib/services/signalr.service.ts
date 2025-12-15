@@ -20,7 +20,8 @@ export class SignalRService implements OnDestroy {
   private messageSubject = new Subject<SignalRMessage>();
   private connectionStateSubject = new BehaviorSubject<ConnectionState>(ConnectionState.Disconnected);
   private reconnectAttempts = 0;
-  private reconnectTimer: any;
+  private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  private mockSimulationTimer: ReturnType<typeof setInterval> | null = null;
   
   public messages$: Observable<SignalRMessage> = this.messageSubject.asObservable();
   public connectionState$: Observable<ConnectionState> = this.connectionStateSubject.asObservable();
@@ -39,6 +40,11 @@ export class SignalRService implements OnDestroy {
     this.stopConnection();
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+    if (this.mockSimulationTimer) {
+      clearInterval(this.mockSimulationTimer);
+      this.mockSimulationTimer = null;
     }
   }
 
@@ -164,7 +170,7 @@ export class SignalRService implements OnDestroy {
   // Mock mode simulation
   private startMockMessageSimulation(): void {
     // Simulate periodic updates in mock mode
-    setInterval(() => {
+    this.mockSimulationTimer = setInterval(() => {
       const mockTypes = ['MissionUpdate', 'Notification'];
       const randomType = mockTypes[Math.floor(Math.random() * mockTypes.length)];
       

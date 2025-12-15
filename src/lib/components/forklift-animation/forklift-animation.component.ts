@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, OnChanges, SimpleChanges, ElementRef, ViewChild, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MissionState } from '../../models';
 
@@ -20,6 +20,7 @@ interface Particle {
   life: number;
   maxLife: number;
   color: string;
+  alpha: number;
 }
 
 @Component({
@@ -29,7 +30,7 @@ interface Particle {
   templateUrl: './forklift-animation.component.html',
   styleUrls: ['./forklift-animation.component.css']
 })
-export class ForkliftAnimationComponent implements OnInit, OnDestroy {
+export class ForkliftAnimationComponent implements OnInit, OnDestroy, OnChanges {
   @ViewChild('canvas', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
   @Input() missionState!: MissionState;
 
@@ -84,8 +85,8 @@ export class ForkliftAnimationComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnChanges(): void {
-    if (this.missionState) {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['missionState'] && this.missionState) {
       this.updateAnimation();
     }
   }
@@ -365,8 +366,8 @@ export class ForkliftAnimationComponent implements OnInit, OnDestroy {
 
   private drawParticles(): void {
     this.particles.forEach(p => {
-      const alpha = p.life / p.maxLife;
-      this.ctx.fillStyle = p.color.replace(')', `, ${alpha})`).replace('rgb', 'rgba');
+      p.alpha = p.life / p.maxLife;
+      this.ctx.fillStyle = `rgba(156, 163, 175, ${p.alpha})`;
       this.ctx.beginPath();
       this.ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
       this.ctx.fill();
@@ -381,7 +382,8 @@ export class ForkliftAnimationComponent implements OnInit, OnDestroy {
       vy: -Math.random() * 2 - 1,
       life: 30,
       maxLife: 30,
-      color: 'rgb(156, 163, 175)'
+      color: 'rgb(156, 163, 175)',
+      alpha: 1
     });
   }
 
@@ -394,7 +396,8 @@ export class ForkliftAnimationComponent implements OnInit, OnDestroy {
         vy: -Math.random() * 4 - 2,
         life: 40,
         maxLife: 40,
-        color: 'rgb(251, 191, 36)'
+        color: 'rgb(251, 191, 36)',
+        alpha: 1
       });
     }
   }

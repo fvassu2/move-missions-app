@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable, combineLatest, map } from 'rxjs';
 import { Mission, MissionState, MissionStatus } from '../models';
 import { SignalRService } from './signalr.service';
@@ -7,13 +7,16 @@ import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class MissionService {
+export class MissionService implements OnDestroy {
   private missionsSubject = new BehaviorSubject<Mission[]>([]);
   private currentMissionSubject = new BehaviorSubject<Mission | null>(null);
   private missionStateSubject = new BehaviorSubject<MissionState>({
     phase: 'idle',
     progress: 0
   });
+
+  private stateUpdateTimer: ReturnType<typeof setInterval> | null = null;
+  private newMissionTimer: ReturnType<typeof setInterval> | null = null;
 
   public missions$: Observable<Mission[]> = this.missionsSubject.asObservable();
   public currentMission$: Observable<Mission | null> = this.currentMissionSubject.asObservable();
@@ -28,7 +31,9 @@ export class MissionService {
     map(missions => missions.filter(m => !m.assignedToMe && m.status === 'pending'))
   );
 
-  private readonly CURRENT_OPERATOR_ID = 'OP-001'; // In real app, this would come from auth
+  // TODO: In production, inject AuthService and get operator ID from authenticated user
+  // For mock/demo purposes, using a hard-coded operator ID
+  private readonly CURRENT_OPERATOR_ID = 'OP-001';
 
   constructor(private signalRService: SignalRService) {
     if (environment.mockMode) {
@@ -40,6 +45,17 @@ export class MissionService {
     this.signalRService.messages$.subscribe(message => {
       this.handleSignalRMessage(message);
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.stateUpdateTimer) {
+      clearInterval(this.stateUpdateTimer);
+      this.stateUpdateTimer = null;
+    }
+    if (this.newMissionTimer) {
+      clearInterval(this.newMissionTimer);
+      this.newMissionTimer = null;
+    }
   }
 
   private loadMockData(): void {
@@ -131,7 +147,7 @@ export class MissionService {
 
   private startMockSimulation(): void {
     // Simulate mission state changes
-    setInterval(() => {
+    this.stateUpdateTimer = setInterval(() => {
       const currentState = this.missionStateSubject.value;
       if (currentState.phase !== 'idle' && currentState.progress < 100) {
         this.missionStateSubject.next({
@@ -144,7 +160,7 @@ export class MissionService {
     }, 500);
 
     // Simulate new missions appearing
-    setInterval(() => {
+    this.newMissionTimer = setInterval(() => {
       if (Math.random() > 0.7) {
         this.addRandomMission();
       }
