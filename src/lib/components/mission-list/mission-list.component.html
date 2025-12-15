@@ -1,0 +1,22 @@
+<div class="mission-list-container">
+  <div class="mission-list-header">
+    <h2>{{ title }}</h2>
+    <span class="mission-count badge badge-info">{{ missions.length }}</span>
+  </div>
+
+  <div class="mission-list" *ngIf="missions.length > 0; else emptyState">
+    <app-mission-card
+      *ngFor="let mission of missions"
+      [mission]="mission"
+      [isExpanded]="mission.isCurrentMission"
+      (actionClick)="onMissionAction($event)">
+    </app-mission-card>
+  </div>
+
+  <ng-template #emptyState>
+    <div class="empty-state">
+      <div class="empty-icon">📋</div>
+      <p>{{ emptyMessage }}</p>
+    </div>
+  </ng-template>
+</div>

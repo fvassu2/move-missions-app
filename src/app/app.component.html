@@ -1,0 +1,160 @@
+<div class="app-container" [attr.data-theme]="currentTheme">
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-content">
+      <div class="header-title">
+        <h1>🚜 {{ title }}</h1>
+      </div>
+      <div class="header-controls">
+        <!-- Theme Switcher -->
+        <button class="theme-toggle" (click)="toggleTheme()" title="Cambia tema">
+          {{ currentTheme === 'light' ? '🌙' : '☀️' }}
+        </button>
+        
+        <!-- RFID Status Indicator -->
+        <div class="rfid-status" [ngClass]="rfidConnected ? 'rfid-connected' : 'rfid-disconnected'"
+             (click)="toggleRfidLog()" title="RFID Status - Click per log">
+          📡 {{ rfidConnected ? 'RFID OK' : 'RFID ERR' }}
+        </div>
+        
+        <!-- Missions Panel Toggle -->
+        <button class="panel-toggle" (click)="toggleMissionsPanel()" title="Mostra/Nascondi Missioni">
+          📋 Missioni
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content - Full Screen Active Mission -->
+  <main class="app-main">
+    
+    <!-- Active Mission Display (90% of screen) -->
+    <div class="active-mission-display">
+      <div *ngIf="currentMission$ | async as currentMission; else noActiveMission" 
+           class="mission-active-card"
+           [ngClass]="getMissionStatusColorClass(currentMission)">
+        
+        <!-- Mission Header -->
+        <div class="mission-active-header">
+          <h2>{{ currentMission.type === 'load' ? '📦' : currentMission.type === 'unload' ? '📤' : '🔄' }} 
+              MISSIONE {{ currentMission.id }}</h2>
+          <div class="mission-priority-badge" [ngClass]="'priority-' + currentMission.priority">
+            {{ getPriorityLabel(currentMission.priority) }}
+          </div>
+        </div>
+
+        <!-- Mission Details - Large and Readable -->
+        <div class="mission-active-details">
+          <div class="location-display">
+            <div class="location-box source">
+              <div class="location-label">DA</div>
+              <div class="location-value">{{ currentMission.sourceLocation }}</div>
+            </div>
+            <div class="arrow-large">→</div>
+            <div class="location-box destination">
+              <div class="location-label">A</div>
+              <div class="location-value">{{ currentMission.destinationLocation }}</div>
+            </div>
+          </div>
+
+          <div class="material-info">
+            <div class="info-row">
+              <span class="label">Materiale:</span>
+              <span class="value">{{ currentMission.material }}</span>
+            </div>
+            <div class="info-row" *ngIf="currentMission.sku">
+              <span class="label">SKU:</span>
+              <span class="value">{{ currentMission.sku }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Quantità:</span>
+              <span class="value">{{ currentMission.quantity }} bins</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RFID Feedback Message -->
+        <div class="rfid-feedback" *ngIf="lastRfidMessage">
+          <div class="rfid-message" [ngClass]="lastRfidMessage.type">
+            {{ lastRfidMessage.text }}
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noActiveMission>
+        <div class="no-mission-display">
+          <div class="idle-icon">😴</div>
+          <h2>In Attesa di Missione</h2>
+          <p>Il sistema RFID rileverà automaticamente i bins caricati</p>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Bottom Progress Strip with Forklift Animation -->
+    <div class="progress-strip" *ngIf="missionState$ | async as missionState">
+      <div class="animation-container">
+        <app-forklift-animation [missionState]="missionState"></app-forklift-animation>
+      </div>
+      <div class="progress-info">
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="missionState.progress"></div>
+        </div>
+        <div class="phase-label">{{ getPhaseLabel(missionState.phase) }} - {{ binsLoaded }} bins</div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Collapsible Missions Panel -->
+  <div class="missions-panel" [class.open]="missionsPanelOpen">
+    <div class="panel-header">
+      <h3>📋 Gestione Missioni</h3>
+      <button class="close-panel" (click)="toggleMissionsPanel()">✕</button>
+    </div>
+    <div class="panel-content">
+      <div class="missions-tabs">
+        <button [class.active]="activeTab === 'my'" (click)="activeTab = 'my'">
+          Le Mie Missioni
+        </button>
+        <button [class.active]="activeTab === 'available'" (click)="activeTab = 'available'">
+          Disponibili
+        </button>
+      </div>
+      
+      <div class="missions-list-scrollable">
+        <app-mission-list *ngIf="activeTab === 'my'"
+          [missions]="(myMissions$ | async) || []"
+          [title]="''"
+          [emptyMessage]="'Nessuna missione assegnata'"
+          (missionAction)="onMissionAction($event)">
+        </app-mission-list>
+        
+        <app-mission-list *ngIf="activeTab === 'available'"
+          [missions]="(availableMissions$ | async) || []"
+          [title]="''"
+          [emptyMessage]="'Nessuna missione disponibile'"
+          (missionAction)="onMissionAction($event)">
+        </app-mission-list>
+      </div>
+    </div>
+  </div>
+
+  <!-- RFID Log Dialog -->
+  <div class="rfid-log-dialog" [class.open]="rfidLogOpen">
+    <div class="dialog-header">
+      <h3>📡 Log Messaggi RFID</h3>
+      <button class="close-dialog" (click)="toggleRfidLog()">✕</button>
+    </div>
+    <div class="dialog-content">
+      <div class="rfid-log-messages">
+        <div class="log-entry" *ngFor="let msg of rfidLogMessages" [ngClass]="msg.type">
+          <span class="log-time">{{ msg.timestamp | date:'HH:mm:ss' }}</span>
+          <span class="log-text">{{ msg.text }}</span>
+        </div>
+        <div *ngIf="rfidLogMessages.length === 0" class="no-messages">
+          Nessun messaggio RFID
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
