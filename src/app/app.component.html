@@ -90,19 +90,16 @@
       </ng-template>
     </div>
 
-    <!-- Bottom Progress Strip with Bins Animation -->
+    <!-- Bottom Progress Strip with Forklift Animation -->
     <div class="progress-strip" *ngIf="missionState$ | async as missionState">
-      <div class="bins-animation">
-        <div class="forklift-simple">
-          🚜
-          <div class="bins-stack" *ngIf="binsLoaded > 0">
-            <div class="bin-box" *ngFor="let bin of getBinsArray(binsLoaded)">📦</div>
-          </div>
-        </div>
+      <div class="animation-container">
+        <app-forklift-animation [missionState]="missionState"></app-forklift-animation>
+      </div>
+      <div class="progress-info">
         <div class="progress-bar">
           <div class="progress-fill" [style.width.%]="missionState.progress"></div>
         </div>
-        <div class="phase-label">{{ getPhaseLabel(missionState.phase) }}</div>
+        <div class="phase-label">{{ getPhaseLabel(missionState.phase) }} - {{ binsLoaded }} bins</div>
       </div>
     </div>
 

@@ -37,10 +37,10 @@ export class ForkliftAnimationComponent implements OnInit, OnDestroy, OnChanges 
   private ctx!: CanvasRenderingContext2D;
   private animationFrameId: number = 0;
   private forklift: ForkliftSprite = {
-    x: 100,
+    x: 50,
     y: 0,
-    width: 80,
-    height: 60,
+    width: 40,
+    height: 30,
     forkHeight: 0,
     hasPallet: false,
     direction: 1
@@ -49,16 +49,16 @@ export class ForkliftAnimationComponent implements OnInit, OnDestroy, OnChanges 
   private particles: Particle[] = [];
   private targetX: number = 100;
   private targetForkHeight: number = 0;
-  private readonly CANVAS_WIDTH = 800;
-  private readonly CANVAS_HEIGHT = 300;
-  private readonly GROUND_Y = 240;
-  private readonly MOVE_SPEED = 2;
-  private readonly FORK_SPEED = 1.5;
+  private readonly CANVAS_WIDTH = 400;
+  private readonly CANVAS_HEIGHT = 80;
+  private readonly GROUND_Y = 65;
+  private readonly MOVE_SPEED = 1.5;
+  private readonly FORK_SPEED = 1;
   
   // Warehouse positions
-  private readonly SOURCE_X = 200;
-  private readonly DEST_X = 600;
-  private readonly IDLE_X = 100;
+  private readonly SOURCE_X = 80;
+  private readonly DEST_X = 320;
+  private readonly IDLE_X = 50;
 
   private wheelRotation: number = 0;
   private frameCount: number = 0;
@@ -180,8 +180,9 @@ export class ForkliftAnimationComponent implements OnInit, OnDestroy, OnChanges 
   }
 
   private draw(): void {
-    // Clear canvas
-    this.ctx.fillStyle = '#1f2937';
+    // Clear canvas with transparent or theme-aware background
+    this.ctx.clearRect(0, 0, this.CANVAS_WIDTH, this.CANVAS_HEIGHT);
+    this.ctx.fillStyle = 'transparent';
     this.ctx.fillRect(0, 0, this.CANVAS_WIDTH, this.CANVAS_HEIGHT);
 
     // Draw warehouse floor
@@ -195,56 +196,52 @@ export class ForkliftAnimationComponent implements OnInit, OnDestroy, OnChanges 
 
     // Draw forklift
     this.drawForklift();
-
-    // Draw progress indicator
-    if (this.missionState && this.missionState.phase !== 'idle') {
-      this.drawProgressBar();
-    }
-
-    // Draw phase label
-    this.drawPhaseLabel();
   }
 
   private drawFloor(): void {
-    // Ground
-    this.ctx.fillStyle = '#374151';
-    this.ctx.fillRect(0, this.GROUND_Y, this.CANVAS_WIDTH, this.CANVAS_HEIGHT - this.GROUND_Y);
-    
-    // Ground lines
-    this.ctx.strokeStyle = '#4b5563';
+    // Ground line only
+    this.ctx.strokeStyle = '#6b7280';
     this.ctx.lineWidth = 2;
-    for (let i = 0; i < this.CANVAS_WIDTH; i += 40) {
+    this.ctx.beginPath();
+    this.ctx.moveTo(0, this.GROUND_Y);
+    this.ctx.lineTo(this.CANVAS_WIDTH, this.GROUND_Y);
+    this.ctx.stroke();
+    
+    // Ground dashes for visual effect
+    this.ctx.strokeStyle = '#9ca3af50';
+    this.ctx.lineWidth = 1;
+    for (let i = 0; i < this.CANVAS_WIDTH; i += 30) {
       this.ctx.beginPath();
       this.ctx.moveTo(i, this.GROUND_Y);
-      this.ctx.lineTo(i + 20, this.GROUND_Y);
+      this.ctx.lineTo(i + 15, this.GROUND_Y);
       this.ctx.stroke();
     }
   }
 
   private drawWarehouseLocations(): void {
     // Source location
-    this.drawLocation(this.SOURCE_X, 'A-01-01', '#3b82f6');
+    this.drawLocation(this.SOURCE_X, 'SRC', '#3b82f6');
     
     // Destination location
-    this.drawLocation(this.DEST_X, 'B-03-05', '#10b981');
+    this.drawLocation(this.DEST_X, 'DST', '#10b981');
   }
 
   private drawLocation(x: number, label: string, color: string): void {
-    const width = 60;
-    const height = 100;
+    const width = 30;
+    const height = 40;
     const y = this.GROUND_Y - height;
 
-    // Rack structure
-    this.ctx.fillStyle = color + '40';
+    // Simple rack structure
+    this.ctx.fillStyle = color + '30';
     this.ctx.fillRect(x - width / 2, y, width, height);
     
     this.ctx.strokeStyle = color;
-    this.ctx.lineWidth = 3;
+    this.ctx.lineWidth = 2;
     this.ctx.strokeRect(x - width / 2, y, width, height);
 
     // Shelves
-    for (let i = 1; i < 4; i++) {
-      const shelfY = y + (height / 4) * i;
+    for (let i = 1; i < 3; i++) {
+      const shelfY = y + (height / 3) * i;
       this.ctx.beginPath();
       this.ctx.moveTo(x - width / 2, shelfY);
       this.ctx.lineTo(x + width / 2, shelfY);
@@ -280,58 +277,60 @@ export class ForkliftAnimationComponent implements OnInit, OnDestroy, OnChanges 
     
     // Window
     this.ctx.fillStyle = '#60a5fa';
-    this.ctx.fillRect(x + width * 0.65, y + 5, width * 0.25, height * 0.35);
+    this.ctx.fillRect(x + width * 0.65, y + 3, width * 0.25, height * 0.35);
 
     // Wheels
-    const wheelRadius = 12;
-    const wheel1X = x + 15;
-    const wheel2X = x + width - 15;
-    const wheelY = y + height + 5;
+    const wheelRadius = 6;
+    const wheel1X = x + 8;
+    const wheel2X = x + width - 8;
+    const wheelY = y + height + 3;
 
     this.drawWheel(wheel1X, wheelY, wheelRadius);
     this.drawWheel(wheel2X, wheelY, wheelRadius);
 
     // Mast (vertical part)
     this.ctx.fillStyle = '#6b7280';
-    this.ctx.fillRect(x + 5, y - 80, 8, 80);
+    this.ctx.fillRect(x + 3, y - 40, 4, 40);
 
     // Forks
     const forkY = y - forkHeight;
     this.ctx.fillStyle = '#9ca3af';
-    this.ctx.fillRect(x + 3, forkY, 4, 40);
-    this.ctx.fillRect(x + 10, forkY, 4, 40);
+    this.ctx.fillRect(x + 2, forkY, 2, 20);
+    this.ctx.fillRect(x + 6, forkY, 2, 20);
 
-    // Pallet on forks
+    // Bins on forks (stacked boxes)
     if (hasPallet) {
-      const palletWidth = 30;
-      const palletHeight = 25;
-      const palletX = x;
-      const palletY = forkY - palletHeight;
+      const binsCount = Math.floor(Math.random() * 3) + 2; // 2-4 bins for visual
+      const binSize = 8;
+      const binX = x;
+      const binStartY = forkY - binSize;
 
-      // Pallet
-      this.ctx.fillStyle = '#8b4513';
-      this.ctx.fillRect(palletX, palletY, palletWidth, palletHeight);
-      
-      // Pallet slats
-      this.ctx.strokeStyle = '#654321';
-      this.ctx.lineWidth = 2;
-      for (let i = 0; i < 4; i++) {
-        const slat = palletY + (palletHeight / 4) * i;
-        this.ctx.beginPath();
-        this.ctx.moveTo(palletX, slat);
-        this.ctx.lineTo(palletX + palletWidth, slat);
-        this.ctx.stroke();
+      for (let i = 0; i < binsCount; i++) {
+        const binY = binStartY - (i * binSize);
+        
+        // Bin box
+        this.ctx.fillStyle = '#8b4513';
+        this.ctx.fillRect(binX, binY, binSize, binSize);
+        
+        // Bin border
+        this.ctx.strokeStyle = '#654321';
+        this.ctx.lineWidth = 1;
+        this.ctx.strokeRect(binX, binY, binSize, binSize);
+        
+        // Simple tape/label on box
+        this.ctx.fillStyle = '#fbbf24';
+        this.ctx.fillRect(binX + 1, binY + binSize/2 - 1, binSize - 2, 2);
       }
 
-      // Sparkles around pallet
+      // Sparkles around bins
       if (this.frameCount % 20 < 10) {
         this.ctx.fillStyle = '#fbbf24';
         this.ctx.beginPath();
-        this.ctx.arc(palletX - 5, palletY + 10, 3, 0, Math.PI * 2);
+        this.ctx.arc(binX - 3, binStartY - binsCount * binSize + 5, 2, 0, Math.PI * 2);
         this.ctx.fill();
         
         this.ctx.beginPath();
-        this.ctx.arc(palletX + palletWidth + 5, palletY + 15, 3, 0, Math.PI * 2);
+        this.ctx.arc(binX + binSize + 3, binStartY - binsCount * binSize + 10, 2, 0, Math.PI * 2);
         this.ctx.fill();
       }
     }
@@ -346,11 +345,28 @@ export class ForkliftAnimationComponent implements OnInit, OnDestroy, OnChanges 
     this.ctx.arc(x, y, radius, 0, Math.PI * 2);
     this.ctx.fill();
 
-    // Rim
+    // Rim with rotation
+    this.ctx.save();
+    this.ctx.translate(x, y);
+    this.ctx.rotate(this.wheelRotation * Math.PI / 180);
+    
     this.ctx.fillStyle = '#6b7280';
     this.ctx.beginPath();
-    this.ctx.arc(x, y, radius * 0.6, 0, Math.PI * 2);
+    this.ctx.arc(0, 0, radius * 0.6, 0, Math.PI * 2);
     this.ctx.fill();
+    
+    // Spokes
+    this.ctx.strokeStyle = '#4b5563';
+    this.ctx.lineWidth = 1;
+    for (let i = 0; i < 4; i++) {
+      this.ctx.beginPath();
+      this.ctx.moveTo(0, 0);
+      const angle = (i * Math.PI) / 2;
+      this.ctx.lineTo(Math.cos(angle) * radius * 0.5, Math.sin(angle) * radius * 0.5);
+      this.ctx.stroke();
+    }
+    
+    this.ctx.restore();
 
     // Spokes
     this.ctx.strokeStyle = '#9ca3af';

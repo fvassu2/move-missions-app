@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Mission, MissionState, MissionPriority } from '../lib/models';
 import { MissionService, SignalRService, ConnectionState } from '../lib/services';
 import { MissionListComponent } from '../lib/components/mission-list/mission-list.component';
+import { ForkliftAnimationComponent } from '../lib/components/forklift-animation/forklift-animation.component';
 
 interface RfidMessage {
   timestamp: Date;
@@ -16,7 +17,8 @@ interface RfidMessage {
   standalone: true,
   imports: [
     CommonModule,
-    MissionListComponent
+    MissionListComponent,
+    ForkliftAnimationComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
