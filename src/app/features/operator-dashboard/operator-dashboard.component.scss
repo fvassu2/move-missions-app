@@ -7,6 +7,27 @@
   .spacer {
     flex: 1 1 auto;
   }
+  
+  .toolbar-button {
+    &:hover {
+      background-color: rgba(128, 128, 128, 0.1);
+    }
+  }
+}
+
+// Dark theme specific styles
+html.theme-dark .dashboard-toolbar {
+  .toolbar-button {
+    color: white;
+    
+    mat-icon {
+      color: white;
+    }
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+  }
 }
 
 .dashboard-content {

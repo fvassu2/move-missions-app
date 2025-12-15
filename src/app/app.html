@@ -1,17 +1,20 @@
 <div class="app-container">
-  <mat-toolbar color="primary" class="main-toolbar">
+  <mat-toolbar class="main-toolbar">
     <span class="app-title">{{ title }}</span>
     <span class="spacer"></span>
     <nav class="nav-links">
-      <a mat-button routerLink="/operator" routerLinkActive="active-link">
+      <a mat-flat-button routerLink="/operator" routerLinkActive="active-link" class="nav-button">
         <mat-icon>dashboard</mat-icon>
-        Operator Dashboard
+        <span>Operator Dashboard</span>
       </a>
-      <a mat-button routerLink="/missions" routerLinkActive="active-link">
+      <a mat-flat-button routerLink="/missions" routerLinkActive="active-link" class="nav-button">
         <mat-icon>assignment</mat-icon>
-        Mission Manager
+        <span>Mission Manager</span>
       </a>
     </nav>
+    <button mat-icon-button (click)="toggleTheme()" class="theme-toggle" [attr.aria-label]="'Change theme: ' + currentTheme" [matTooltip]="'Theme: ' + currentTheme">
+      <mat-icon>{{ getCurrentThemeIcon() }}</mat-icon>
+    </button>
   </mat-toolbar>
   
   <div class="main-content">

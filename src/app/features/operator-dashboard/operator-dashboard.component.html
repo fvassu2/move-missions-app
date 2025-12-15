@@ -46,17 +46,17 @@
       <span>Operator Dashboard</span>
       <span class="spacer"></span>
       
-      <!-- Backup Toolbar Actions -->
-      <button mat-icon-button [matBadge]="activeMissions.length" matBadgeColor="warn">
-        <mat-icon>assignment</mat-icon>
+      <!-- Toolbar Actions -->
+      <button mat-icon-button (click)="toggleDrawer()" [matBadge]="activeMissions.length" matBadgeColor="warn" class="toolbar-button" matTooltip="Active Missions">
+        <mat-icon>view_sidebar</mat-icon>
       </button>
-      <button mat-icon-button [matBadge]="forklifts.length" matBadgeColor="accent">
+      <button mat-icon-button [matBadge]="forklifts.length" matBadgeColor="accent" class="toolbar-button" matTooltip="Forklifts">
         <mat-icon>forklift</mat-icon>
       </button>
-      <button mat-icon-button>
+      <button mat-icon-button class="toolbar-button" matTooltip="Refresh">
         <mat-icon>refresh</mat-icon>
       </button>
-      <button mat-icon-button>
+      <button mat-icon-button class="toolbar-button" matTooltip="Settings">
         <mat-icon>settings</mat-icon>
       </button>
     </mat-toolbar>
