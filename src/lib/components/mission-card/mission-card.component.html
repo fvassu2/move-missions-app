@@ -1,0 +1,103 @@
+<div 
+  class="mission-card"
+  [class.current-mission]="mission.isCurrentMission"
+  [class.my-mission]="mission.assignedToMe"
+  [class.expanded]="isExpanded"
+  [ngClass]="[getStatusClass(), getPriorityClass()]">
+  
+  <!-- Header -->
+  <div class="mission-header">
+    <div class="mission-title">
+      <span class="mission-icon">{{ getTypeIcon() }}</span>
+      <span class="mission-id">{{ mission.id }}</span>
+      <span class="badge" [ngClass]="getPriorityClass()">
+        {{ getPriorityLabel() }}
+      </span>
+    </div>
+    <div class="mission-status">
+      <span class="badge" [ngClass]="getStatusClass()">
+        {{ getStatusLabel() }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="mission-body">
+    <div class="mission-route">
+      <div class="location source">
+        <div class="location-label">Da:</div>
+        <div class="location-value">{{ mission.sourceLocation }}</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="location destination">
+        <div class="location-label">A:</div>
+        <div class="location-value">{{ mission.destinationLocation }}</div>
+      </div>
+    </div>
+
+    <div class="mission-details">
+      <div class="detail-row">
+        <span class="detail-label">Materiale:</span>
+        <span class="detail-value">{{ mission.material }}</span>
+      </div>
+      <div class="detail-row" *ngIf="mission.sku">
+        <span class="detail-label">SKU:</span>
+        <span class="detail-value">{{ mission.sku }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Quantità:</span>
+        <span class="detail-value">{{ mission.quantity }} unità</span>
+      </div>
+    </div>
+
+    <!-- Action Buttons - Only show for current mission or assigned missions -->
+    <div class="mission-actions" *ngIf="mission.isCurrentMission || (mission.assignedToMe && mission.status === 'assigned')">
+      
+      <!-- Start Mission Button -->
+      <button 
+        *ngIf="mission.status === 'assigned' && !mission.isCurrentMission"
+        class="btn btn-primary"
+        (click)="onAction('start')">
+        🚀 Inizia Missione
+      </button>
+
+      <!-- In Progress Actions -->
+      <ng-container *ngIf="mission.isCurrentMission && mission.status === 'in_progress'">
+        <button 
+          *ngIf="mission.type === 'load' || mission.type === 'move'"
+          class="btn btn-success"
+          (click)="onAction('confirmLoad')">
+          📦 Conferma Carico
+        </button>
+        
+        <button 
+          *ngIf="mission.type === 'unload' || mission.type === 'move'"
+          class="btn btn-success"
+          (click)="onAction('confirmUnload')">
+          📤 Conferma Scarico
+        </button>
+
+        <button 
+          class="btn btn-complete"
+          (click)="onAction('complete')">
+          ✅ Completa Missione
+        </button>
+
+        <button 
+          class="btn btn-danger"
+          (click)="onAction('reportProblem')">
+          ⚠️ Segnala Problema
+        </button>
+      </ng-container>
+    </div>
+
+    <!-- Accept Mission Button - For available missions -->
+    <div class="mission-actions" *ngIf="!mission.assignedToMe && mission.status === 'pending'">
+      <button 
+        class="btn btn-info"
+        (click)="onAction('accept')">
+        👍 Accetta Missione
+      </button>
+    </div>
+  </div>
+</div>
