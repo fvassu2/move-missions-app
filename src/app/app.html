@@ -1,0 +1,20 @@
+<div class="app-container">
+  <mat-toolbar color="primary" class="main-toolbar">
+    <span class="app-title">{{ title }}</span>
+    <span class="spacer"></span>
+    <nav class="nav-links">
+      <a mat-button routerLink="/operator" routerLinkActive="active-link">
+        <mat-icon>dashboard</mat-icon>
+        Operator Dashboard
+      </a>
+      <a mat-button routerLink="/missions" routerLinkActive="active-link">
+        <mat-icon>assignment</mat-icon>
+        Mission Manager
+      </a>
+    </nav>
+  </mat-toolbar>
+  
+  <div class="main-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

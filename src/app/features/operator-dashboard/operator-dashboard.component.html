@@ -1,0 +1,112 @@
+<mat-sidenav-container class="dashboard-container">
+  <!-- Mission Info Drawer -->
+  <mat-sidenav #drawer mode="side" [(opened)]="drawerOpened" position="end" class="mission-drawer">
+    <div class="drawer-header">
+      <h2>Active Missions</h2>
+      <button mat-icon-button (click)="toggleDrawer()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    
+    <mat-list>
+      <mat-list-item *ngFor="let mission of activeMissions">
+        <div class="mission-item">
+          <div class="mission-header">
+            <span class="mission-name">{{ mission.name }}</span>
+            <span class="status-chip" [ngClass]="'status-' + mission.status.toLowerCase()">
+              {{ mission.status }}
+            </span>
+          </div>
+          <div class="mission-details">
+            <div class="detail-row">
+              <mat-icon>forklift</mat-icon>
+              <span>{{ mission.forkliftId || 'Unassigned' }}</span>
+            </div>
+            <div class="detail-row">
+              <mat-icon>place</mat-icon>
+              <span>{{ mission.pickupLocation.name }} → {{ mission.dropoffLocation.name }}</span>
+            </div>
+          </div>
+        </div>
+      </mat-list-item>
+      
+      <mat-list-item *ngIf="activeMissions.length === 0">
+        <div class="empty-state">
+          <mat-icon>inbox</mat-icon>
+          <p>No active missions</p>
+        </div>
+      </mat-list-item>
+    </mat-list>
+  </mat-sidenav>
+
+  <!-- Main Content -->
+  <mat-sidenav-content>
+    <!-- Toolbar -->
+    <mat-toolbar color="primary" class="dashboard-toolbar">
+      <span>Operator Dashboard</span>
+      <span class="spacer"></span>
+      
+      <!-- Backup Toolbar Actions -->
+      <button mat-icon-button [matBadge]="activeMissions.length" matBadgeColor="warn">
+        <mat-icon>assignment</mat-icon>
+      </button>
+      <button mat-icon-button [matBadge]="forklifts.length" matBadgeColor="accent">
+        <mat-icon>forklift</mat-icon>
+      </button>
+      <button mat-icon-button>
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <button mat-icon-button>
+        <mat-icon>settings</mat-icon>
+      </button>
+    </mat-toolbar>
+
+    <div class="dashboard-content">
+      <!-- Canvas for Forklift Animation -->
+      <mat-card class="canvas-card">
+        <mat-card-header>
+          <mat-card-title>Warehouse View</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <canvas #canvas></canvas>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- RFID Panel -->
+      <mat-card class="rfid-panel">
+        <mat-card-header>
+          <mat-card-title>
+            RFID Reads
+            <button mat-icon-button (click)="clearRfidReads()" class="clear-btn">
+              <mat-icon>clear</mat-icon>
+            </button>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-list class="rfid-list">
+            <mat-list-item *ngFor="let read of rfidReads" class="rfid-item">
+              <mat-icon matListItemIcon [class]="'rfid-icon-' + read.type.toLowerCase()">
+                {{ getRfidTypeIcon(read.type) }}
+              </mat-icon>
+              <div matListItemTitle>{{ read.tagId }}</div>
+              <div matListItemLine>
+                Reader: {{ read.readerId }} | 
+                {{ read.timestamp | date:'HH:mm:ss' }}
+              </div>
+              <div matListItemLine *ngIf="read.forkliftId">
+                Forklift: {{ read.forkliftId }}
+              </div>
+            </mat-list-item>
+            
+            <mat-list-item *ngIf="rfidReads.length === 0">
+              <div class="empty-state">
+                <mat-icon>nfc</mat-icon>
+                <p>No recent RFID reads</p>
+              </div>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

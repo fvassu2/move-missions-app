@@ -1,0 +1,136 @@
+<mat-toolbar color="primary">
+  <span>Mission Manager</span>
+  <span class="spacer"></span>
+  <button mat-raised-button color="accent" (click)="openCreateDialog()">
+    <mat-icon>add</mat-icon>
+    Create Mission
+  </button>
+</mat-toolbar>
+
+<div class="mission-manager-container">
+  <!-- Filters -->
+  <mat-card class="filter-card">
+    <mat-card-content>
+      <form [formGroup]="filterForm" class="filter-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Search</mat-label>
+          <input matInput formControlName="search" placeholder="Search missions...">
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status">
+            <mat-option [value]="''">All</mat-option>
+            <mat-option *ngFor="let status of statuses" [value]="status">
+              {{ status }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Priority</mat-label>
+          <mat-select formControlName="priority">
+            <mat-option [value]="''">All</mat-option>
+            <mat-option *ngFor="let priority of priorities" [value]="priority">
+              {{ priority }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-button (click)="clearFilters()">
+          <mat-icon>clear</mat-icon>
+          Clear Filters
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Mission Table -->
+  <mat-card class="table-card">
+    <mat-card-content>
+      <table mat-table [dataSource]="filteredMissions" class="mission-table">
+        <!-- ID Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>ID</th>
+          <td mat-cell *matCellDef="let mission">{{ mission.id }}</td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let mission">
+            <div class="mission-name-cell">
+              <strong>{{ mission.name }}</strong>
+              <span class="mission-description" *ngIf="mission.description">
+                {{ mission.description }}
+              </span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let mission">
+            <mat-chip [ngClass]="getStatusClass(mission.status)">
+              {{ mission.status }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <!-- Priority Column -->
+        <ng-container matColumnDef="priority">
+          <th mat-header-cell *matHeaderCellDef>Priority</th>
+          <td mat-cell *matCellDef="let mission">
+            <mat-chip [ngClass]="getPriorityClass(mission.priority)">
+              {{ mission.priority }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <!-- Forklift Column -->
+        <ng-container matColumnDef="forklift">
+          <th mat-header-cell *matHeaderCellDef>Forklift</th>
+          <td mat-cell *matCellDef="let mission">
+            {{ mission.forkliftId || 'Unassigned' }}
+          </td>
+        </ng-container>
+
+        <!-- Locations Column -->
+        <ng-container matColumnDef="locations">
+          <th mat-header-cell *matHeaderCellDef>Route</th>
+          <td mat-cell *matCellDef="let mission">
+            <div class="locations-cell">
+              <mat-icon>place</mat-icon>
+              {{ mission.pickupLocation.name }}
+              <mat-icon>arrow_forward</mat-icon>
+              {{ mission.dropoffLocation.name }}
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let mission">
+            <button mat-icon-button (click)="openEditDialog(mission)" [disabled]="mission.status === 'COMPLETED'">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="deleteMission(mission)" color="warn">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <div *ngIf="filteredMissions.length === 0" class="empty-state">
+        <mat-icon>inbox</mat-icon>
+        <p>No missions found</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

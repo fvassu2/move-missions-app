@@ -1,0 +1,149 @@
+.dashboard-container {
+  height: 100vh;
+  width: 100%;
+}
+
+.dashboard-toolbar {
+  .spacer {
+    flex: 1 1 auto;
+  }
+}
+
+.dashboard-content {
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.canvas-card {
+  flex: 2;
+  min-width: 600px;
+  
+  canvas {
+    display: block;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+  }
+}
+
+.rfid-panel {
+  flex: 1;
+  min-width: 300px;
+  max-height: 650px;
+  
+  mat-card-header {
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      
+      .clear-btn {
+        margin-left: auto;
+      }
+    }
+  }
+  
+  .rfid-list {
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  
+  .rfid-item {
+    border-bottom: 1px solid var(--border-color);
+    
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+  
+  .rfid-icon-tag_read {
+    color: var(--rfid-tag-read);
+  }
+  
+  .rfid-icon-zone_entry {
+    color: var(--rfid-zone-entry);
+  }
+  
+  .rfid-icon-zone_exit {
+    color: var(--rfid-zone-exit);
+  }
+  
+  .rfid-icon-checkpoint {
+    color: var(--rfid-checkpoint);
+  }
+}
+
+.mission-drawer {
+  width: 350px;
+  padding: 20px;
+  
+  .drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    
+    h2 {
+      margin: 0;
+    }
+  }
+  
+  .mission-item {
+    width: 100%;
+    padding: 12px 0;
+    
+    .mission-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      
+      .mission-name {
+        font-weight: 500;
+        font-size: 14px;
+      }
+    }
+    
+    .mission-details {
+      .detail-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin-top: 4px;
+        
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
+      }
+    }
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-secondary);
+  
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 14px;
+  }
+}
