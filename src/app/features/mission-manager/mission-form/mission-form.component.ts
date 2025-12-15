@@ -89,17 +89,21 @@ export class MissionFormComponent implements OnInit, AfterViewInit {
     this.drawMap();
   }
 
+  private getCSSVariable(name: string): string {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+
   private drawMap(): void {
     if (!this.ctx) return;
     
     const canvas = this.mapCanvasRef.nativeElement;
     
     // Clear canvas
-    this.ctx.fillStyle = '#f5f5f5';
+    this.ctx.fillStyle = this.getCSSVariable('--background-light') || '#f5f5f5';
     this.ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     // Draw grid
-    this.ctx.strokeStyle = '#e0e0e0';
+    this.ctx.strokeStyle = this.getCSSVariable('--border-color') || '#e0e0e0';
     this.ctx.lineWidth = 1;
     
     for (let x = 0; x <= canvas.width; x += 50) {
@@ -122,14 +126,16 @@ export class MissionFormComponent implements OnInit, AfterViewInit {
       const isDropoff = this.selectedDropoff?.id === loc.id;
       
       if (isPickup || isDropoff) {
-        this.ctx.fillStyle = isPickup ? '#81C784' : '#FFB74D';
+        this.ctx.fillStyle = isPickup ? 
+          (this.getCSSVariable('--location-pickup') || '#81C784') : 
+          (this.getCSSVariable('--location-dropoff') || '#FFB74D');
         this.ctx.fillRect(loc.x - 15, loc.y - 15, 30, 30);
       } else {
         this.ctx.fillStyle = this.getLocationColor(loc.type || 'storage');
         this.ctx.fillRect(loc.x - 10, loc.y - 10, 20, 20);
       }
       
-      this.ctx.fillStyle = '#000';
+      this.ctx.fillStyle = this.getCSSVariable('--text-primary') || '#000';
       this.ctx.font = '10px Arial';
       this.ctx.textAlign = 'center';
       this.ctx.fillText(loc.name, loc.x, loc.y + 25);
@@ -137,7 +143,7 @@ export class MissionFormComponent implements OnInit, AfterViewInit {
     
     // Draw route line
     if (this.selectedPickup && this.selectedDropoff) {
-      this.ctx.strokeStyle = '#2196F3';
+      this.ctx.strokeStyle = this.getCSSVariable('--status-assigned') || '#2196F3';
       this.ctx.lineWidth = 3;
       this.ctx.setLineDash([5, 5]);
       this.ctx.beginPath();
@@ -150,11 +156,11 @@ export class MissionFormComponent implements OnInit, AfterViewInit {
 
   private getLocationColor(type: string): string {
     switch (type) {
-      case 'storage': return '#64B5F6';
-      case 'pickup': return '#81C784';
-      case 'dropoff': return '#FFB74D';
-      case 'charging': return '#FFA726';
-      case 'staging': return '#BA68C8';
+      case 'storage': return this.getCSSVariable('--location-storage') || '#64B5F6';
+      case 'pickup': return this.getCSSVariable('--location-pickup') || '#81C784';
+      case 'dropoff': return this.getCSSVariable('--location-dropoff') || '#FFB74D';
+      case 'charging': return this.getCSSVariable('--location-charging') || '#FFA726';
+      case 'staging': return this.getCSSVariable('--location-staging') || '#BA68C8';
       default: return '#9E9E9E';
     }
   }

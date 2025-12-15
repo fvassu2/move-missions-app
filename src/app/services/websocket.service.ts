@@ -27,14 +27,16 @@ export class WebSocketService {
             errors.pipe(
               tap(err => {
                 console.error('WebSocket error:', err);
-                this.reconnectAttempts++;
+                if (this.reconnectAttempts < this.maxReconnectAttempts) {
+                  this.reconnectAttempts++;
+                }
               }),
               delayWhen(() => {
                 const delay = Math.min(
-                  this.reconnectInterval * Math.pow(2, this.reconnectAttempts),
+                  this.reconnectInterval * Math.pow(2, Math.min(this.reconnectAttempts, 5)),
                   30000
                 );
-                console.log(`Reconnecting in ${delay}ms...`);
+                console.log(`Reconnecting in ${delay}ms... (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
                 return timer(delay);
               })
             )

@@ -78,6 +78,10 @@ export class OperatorDashboardComponent implements OnInit, OnDestroy, AfterViewI
     this.startAnimation();
   }
 
+  private getCSSVariable(name: string): string {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
     if (this.animationFrameId) {
@@ -114,7 +118,7 @@ export class OperatorDashboardComponent implements OnInit, OnDestroy, AfterViewI
 
   private drawGrid(): void {
     const canvas = this.canvasRef.nativeElement;
-    this.ctx.strokeStyle = '#e0e0e0';
+    this.ctx.strokeStyle = this.getCSSVariable('--border-color') || '#e0e0e0';
     this.ctx.lineWidth = 1;
     
     // Vertical lines
@@ -146,7 +150,7 @@ export class OperatorDashboardComponent implements OnInit, OnDestroy, AfterViewI
       this.ctx.fillStyle = this.getLocationColor(loc.type);
       this.ctx.fillRect(loc.x - 15, loc.y - 15, 30, 30);
       
-      this.ctx.fillStyle = '#000';
+      this.ctx.fillStyle = this.getCSSVariable('--text-primary') || '#000';
       this.ctx.font = '10px Arial';
       this.ctx.textAlign = 'center';
       this.ctx.fillText(loc.name, loc.x, loc.y + 25);
@@ -155,9 +159,9 @@ export class OperatorDashboardComponent implements OnInit, OnDestroy, AfterViewI
 
   private getLocationColor(type: string): string {
     switch (type) {
-      case 'storage': return '#64B5F6';
-      case 'dropoff': return '#FFB74D';
-      case 'staging': return '#BA68C8';
+      case 'storage': return this.getCSSVariable('--location-storage') || '#64B5F6';
+      case 'dropoff': return this.getCSSVariable('--location-dropoff') || '#FFB74D';
+      case 'staging': return this.getCSSVariable('--location-staging') || '#BA68C8';
       default: return '#9E9E9E';
     }
   }
@@ -176,7 +180,7 @@ export class OperatorDashboardComponent implements OnInit, OnDestroy, AfterViewI
     this.ctx.fillRect(-10, -15, 20, 30);
     
     // Draw forklift direction indicator
-    this.ctx.fillStyle = '#333';
+    this.ctx.fillStyle = this.getCSSVariable('--text-primary') || '#333';
     this.ctx.beginPath();
     this.ctx.moveTo(10, 0);
     this.ctx.lineTo(15, -5);
@@ -187,7 +191,7 @@ export class OperatorDashboardComponent implements OnInit, OnDestroy, AfterViewI
     this.ctx.restore();
     
     // Draw forklift label
-    this.ctx.fillStyle = '#000';
+    this.ctx.fillStyle = this.getCSSVariable('--text-primary') || '#000';
     this.ctx.font = '10px Arial';
     this.ctx.textAlign = 'center';
     this.ctx.fillText(forklift.name, x, y - 25);
@@ -199,11 +203,11 @@ export class OperatorDashboardComponent implements OnInit, OnDestroy, AfterViewI
 
   private getForkliftColor(status: string): string {
     switch (status) {
-      case 'ACTIVE': return '#66BB6A';
-      case 'IDLE': return '#9E9E9E';
-      case 'CHARGING': return '#FFA726';
-      case 'ERROR': return '#EF5350';
-      default: return '#42A5F5';
+      case 'ACTIVE': return this.getCSSVariable('--forklift-active') || '#66BB6A';
+      case 'IDLE': return this.getCSSVariable('--forklift-idle') || '#9E9E9E';
+      case 'CHARGING': return this.getCSSVariable('--forklift-charging') || '#FFA726';
+      case 'ERROR': return this.getCSSVariable('--forklift-error') || '#EF5350';
+      default: return this.getCSSVariable('--forklift-maintenance') || '#42A5F5';
     }
   }
 
