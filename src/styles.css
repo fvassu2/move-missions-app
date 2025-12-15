@@ -15,13 +15,13 @@
   --color-high-priority: #ef4444;
   --color-available: #3b82f6;
   
-  /* Dark mode colors */
-  --bg-primary: #1f2937;
-  --bg-secondary: #111827;
-  --bg-card: #374151;
-  --text-primary: #f9fafb;
-  --text-secondary: #d1d5db;
-  --border-color: #4b5563;
+  /* Light mode colors (default) */
+  --bg-primary: #f3f4f6;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --border-color: #d1d5db;
   
   /* Spacing */
   --spacing-xs: 0.25rem;
@@ -39,6 +39,16 @@
   --transition-slow: 500ms;
 }
 
+/* Dark mode */
+[data-theme="dark"] {
+  --bg-primary: #1f2937;
+  --bg-secondary: #111827;
+  --bg-card: #374151;
+  --text-primary: #f9fafb;
+  --text-secondary: #d1d5db;
+  --border-color: #4b5563;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -47,7 +57,9 @@
 
 html, body {
   height: 100%;
-  overflow-x: hidden;
+  width: 100%;
+  overflow: hidden; /* No scrollbars */
+  position: fixed; /* Prevent scrolling on mobile */
 }
 
 body {

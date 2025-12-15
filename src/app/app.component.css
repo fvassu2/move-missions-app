@@ -1,25 +1,22 @@
 .app-container {
-  min-height: 100vh;
+  height: 100vh;
+  width: 100vw;
   display: flex;
   flex-direction: column;
   background: var(--bg-primary);
+  overflow: hidden;
 }
 
-/* Header */
+/* Header - Compact */
 .app-header {
   background: var(--bg-secondary);
-  border-bottom: 3px solid var(--border-color);
-  padding: 1.5rem 0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border-bottom: 2px solid var(--border-color);
+  padding: 0.75rem 1rem;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .header-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -27,115 +24,540 @@
 
 .header-title h1 {
   margin: 0;
-  font-size: 2rem;
+  font-size: 1.5rem;
   color: var(--text-primary);
-}
-
-.connection-status {
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
   font-weight: 600;
-  font-size: 1rem;
-  transition: all 0.3s ease;
 }
 
-.status-connected {
+.header-controls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.theme-toggle {
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.05);
+  border-color: var(--color-primary);
+}
+
+.rfid-status {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.rfid-connected {
   background-color: rgba(16, 185, 129, 0.2);
   color: var(--color-success);
   border: 2px solid var(--color-success);
 }
 
-.status-connecting {
-  background-color: rgba(245, 158, 11, 0.2);
-  color: var(--color-warning);
-  border: 2px solid var(--color-warning);
-  animation: pulse 2s ease-in-out infinite;
-}
-
-.status-disconnected {
+.rfid-disconnected {
   background-color: rgba(239, 68, 68, 0.2);
   color: var(--color-danger);
   border: 2px solid var(--color-danger);
+  animation: pulse 2s ease-in-out infinite;
 }
 
-/* Main Content */
+.panel-toggle {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.panel-toggle:hover {
+  background: #1d4ed8;
+  transform: scale(1.05);
+}
+
+/* Main Content - Full Screen */
 .app-main {
   flex: 1;
-  padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
 }
 
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
+/* Active Mission Display - 90% of screen */
+.active-mission-display {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow: hidden;
 }
 
-/* Sections */
-.animation-section {
+.mission-active-card {
+  width: 100%;
+  max-width: 1200px;
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 4px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.mission-active-card.status-active {
+  border-color: var(--color-success);
+  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(16, 185, 129, 0.1) 100%);
+  animation: glow 2s ease-in-out infinite;
+}
+
+.mission-active-card.status-error {
+  border-color: var(--color-danger);
+  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(239, 68, 68, 0.1) 100%);
+}
+
+.mission-active-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--border-color);
 }
 
-.current-mission-section {
-  margin-bottom: 3rem;
-}
-
-.section-header {
-  margin-bottom: 1rem;
-}
-
-.section-header h2 {
+.mission-active-header h2 {
+  font-size: 2.5rem;
   margin: 0;
   color: var(--text-primary);
-  font-size: 2rem;
 }
 
-.missions-section {
-  margin-bottom: 3rem;
+.mission-priority-badge {
+  padding: 0.75rem 1.5rem;
+  border-radius: 24px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
-/* Idle State */
-.idle-section {
-  margin-bottom: 3rem;
+.mission-priority-badge.priority-high {
+  background: var(--color-high-priority);
+  color: white;
 }
 
-.idle-message {
-  background: var(--bg-card);
-  border-radius: 12px;
-  padding: 3rem 2rem;
+.mission-priority-badge.priority-normal {
+  background: var(--color-info);
+  color: white;
+}
+
+.mission-priority-badge.priority-low {
+  background: var(--color-pending);
+  color: white;
+}
+
+.mission-active-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.location-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.location-box {
+  flex: 1;
+  background: var(--bg-primary);
+  border: 3px solid var(--border-color);
+  border-radius: 16px;
+  padding: 2rem;
   text-align: center;
-  border: 2px dashed var(--border-color);
 }
 
-.idle-icon {
-  font-size: 5rem;
-  margin-bottom: 1rem;
-  animation: pulse 3s ease-in-out infinite;
+.location-box.source {
+  border-color: var(--color-info);
 }
 
-.idle-message h3 {
-  color: var(--text-primary);
+.location-box.destination {
+  border-color: var(--color-success);
+}
+
+.location-label {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  font-weight: 600;
   margin-bottom: 0.5rem;
 }
 
-.idle-message p {
-  color: var(--text-secondary);
-  font-size: 1.25rem;
-  margin: 0;
+.location-value {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
-/* Footer */
-.app-footer {
-  background: var(--bg-secondary);
-  border-top: 1px solid var(--border-color);
+.arrow-large {
+  font-size: 4rem;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.material-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
   padding: 1rem;
+  background: var(--bg-primary);
+  border-radius: 8px;
+}
+
+.info-row .label {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 1.125rem;
+}
+
+.info-row .value {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+}
+
+/* RFID Feedback */
+.rfid-feedback {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--border-color);
+}
+
+.rfid-message {
+  padding: 1.5rem;
+  border-radius: 12px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.rfid-message.success {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--color-success);
+  border: 3px solid var(--color-success);
+}
+
+.rfid-message.error {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--color-danger);
+  border: 3px solid var(--color-danger);
+  animation: shake 0.5s ease;
+}
+
+.rfid-message.warning {
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--color-warning);
+  border: 3px solid var(--color-warning);
+}
+
+.rfid-message.info {
+  background: rgba(59, 130, 246, 0.2);
+  color: var(--color-info);
+  border: 3px solid var(--color-info);
+}
+
+/* No Active Mission */
+.no-mission-display {
   text-align: center;
   color: var(--text-secondary);
-  margin-top: auto;
 }
 
-.app-footer p {
+.no-mission-display .idle-icon {
+  font-size: 8rem;
+  margin-bottom: 2rem;
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.no-mission-display h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.no-mission-display p {
+  font-size: 1.5rem;
+}
+
+/* Bottom Progress Strip */
+.progress-strip {
+  flex-shrink: 0;
+  background: var(--bg-secondary);
+  border-top: 2px solid var(--border-color);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bins-animation {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.forklift-simple {
+  font-size: 3rem;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.bins-stack {
+  position: absolute;
+  top: -40px;
+  left: 10px;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 2px;
+}
+
+.bin-box {
+  font-size: 1.5rem;
+  animation: stackPop 0.3s ease;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 30px;
+  background: var(--bg-primary);
+  border-radius: 15px;
+  overflow: hidden;
+  border: 2px solid var(--border-color);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-success), var(--color-info));
+  transition: width 0.5s ease;
+}
+
+.phase-label {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 200px;
+  text-align: right;
+}
+
+/* Collapsible Missions Panel */
+.missions-panel {
+  position: fixed;
+  right: -400px;
+  top: 0;
+  width: 400px;
+  height: 100vh;
+  background: var(--bg-secondary);
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.2);
+  transition: right 0.3s ease;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+}
+
+.missions-panel.open {
+  right: 0;
+}
+
+.panel-header {
+  padding: 1rem;
+  border-bottom: 2px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-card);
+}
+
+.panel-header h3 {
   margin: 0;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+}
+
+.close-panel {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 0.25rem 0.5rem;
+}
+
+.close-panel:hover {
+  color: var(--color-danger);
+}
+
+.panel-content {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.missions-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--border-color);
+  background: var(--bg-card);
+}
+
+.missions-tabs button {
+  flex: 1;
+  padding: 1rem;
+  background: none;
+  border: none;
   font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 3px solid transparent;
+}
+
+.missions-tabs button:hover {
+  background: var(--bg-primary);
+}
+
+.missions-tabs button.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.missions-list-scrollable {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+/* RFID Log Dialog */
+.rfid-log-dialog {
+  position: fixed;
+  right: -500px;
+  top: 0;
+  width: 500px;
+  height: 100vh;
+  background: var(--bg-secondary);
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.2);
+  transition: right 0.3s ease;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+}
+
+.rfid-log-dialog.open {
+  right: 0;
+}
+
+.dialog-header {
+  padding: 1rem;
+  border-bottom: 2px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-card);
+}
+
+.dialog-header h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+}
+
+.close-dialog {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 0.25rem 0.5rem;
+}
+
+.close-dialog:hover {
+  color: var(--color-danger);
+}
+
+.dialog-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.rfid-log-messages {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.log-entry {
+  padding: 0.75rem;
+  border-radius: 8px;
+  border-left: 4px solid var(--border-color);
+  background: var(--bg-card);
+  font-size: 0.875rem;
+  display: flex;
+  gap: 0.75rem;
+  animation: slideIn 0.3s ease;
+}
+
+.log-entry.success {
+  border-left-color: var(--color-success);
+}
+
+.log-entry.error {
+  border-left-color: var(--color-danger);
+}
+
+.log-entry.warning {
+  border-left-color: var(--color-warning);
+}
+
+.log-entry.info {
+  border-left-color: var(--color-info);
+}
+
+.log-time {
+  color: var(--text-secondary);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.log-text {
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.no-messages {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 2rem;
 }
 
 /* Animations */
@@ -148,36 +570,67 @@
   }
 }
 
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes stackPop {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 /* Responsive */
-@media (max-width: 768px) {
-  .app-header {
-    padding: 1rem 0;
+@media (max-width: 1024px) {
+  .missions-panel,
+  .rfid-log-dialog {
+    width: 100vw;
+    right: -100vw;
   }
-
-  .header-content {
-    padding: 0 1rem;
-    flex-direction: column;
-    gap: 1rem;
-    align-items: flex-start;
+  
+  .location-value {
+    font-size: 2rem;
   }
-
-  .header-title h1 {
-    font-size: 1.5rem;
-  }
-
-  .app-main {
-    padding: 1rem 0;
-  }
-
-  .container {
-    padding: 0 1rem;
-  }
-
-  .idle-message {
-    padding: 2rem 1rem;
-  }
-
-  .idle-icon {
-    font-size: 3rem;
+  
+  .arrow-large {
+    font-size: 2.5rem;
   }
 }
