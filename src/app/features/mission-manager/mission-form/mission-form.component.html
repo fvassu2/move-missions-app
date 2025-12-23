@@ -1,0 +1,94 @@
+<h2 mat-dialog-title>{{ mode === 'create' ? 'Create Mission' : 'Edit Mission' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="missionForm" class="mission-form">
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Mission Name</mat-label>
+        <input matInput formControlName="name" placeholder="Enter mission name" required>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" placeholder="Enter description" rows="2"></textarea>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="status" required>
+          <mat-option *ngFor="let status of statuses" [value]="status">
+            {{ status }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Priority</mat-label>
+        <mat-select formControlName="priority" required>
+          <mat-option *ngFor="let priority of priorities" [value]="priority">
+            {{ priority }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Forklift ID</mat-label>
+        <input matInput formControlName="forkliftId" placeholder="e.g. FL-001">
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Pickup Location</mat-label>
+        <mat-select formControlName="pickupLocationId" required>
+          <mat-option *ngFor="let location of locations" [value]="location.id">
+            {{ location.name }} ({{ location.zone }})
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Dropoff Location</mat-label>
+        <mat-select formControlName="dropoffLocationId" required>
+          <mat-option *ngFor="let location of locations" [value]="location.id">
+            {{ location.name }} ({{ location.zone }})
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <mat-card class="map-card">
+      <mat-card-header>
+        <mat-card-title>Warehouse Map</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <canvas #mapCanvas></canvas>
+        <div class="map-legend">
+          <div class="legend-item">
+            <div class="legend-color pickup"></div>
+            <span>Pickup Location</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color dropoff"></div>
+            <span>Dropoff Location</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color route"></div>
+            <span>Route</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!missionForm.valid">
+    {{ mode === 'create' ? 'Create' : 'Save' }}
+  </button>
+</mat-dialog-actions>

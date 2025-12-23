@@ -1,0 +1,91 @@
+.spacer {
+  flex: 1 1 auto;
+}
+
+.mission-manager-container {
+  padding: 20px;
+}
+
+.filter-card {
+  margin-bottom: 20px;
+  
+  .filter-form {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+    
+    mat-form-field {
+      flex: 1;
+      min-width: 200px;
+    }
+  }
+}
+
+.table-card {
+  .mission-table {
+    width: 100%;
+    
+    th {
+      font-weight: 600;
+      background-color: var(--background-light);
+    }
+    
+    .mission-name-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      
+      strong {
+        font-size: 14px;
+      }
+      
+      .mission-description {
+        font-size: 12px;
+        color: var(--text-secondary);
+      }
+    }
+    
+    .locations-cell {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
+    }
+    
+    mat-chip {
+      font-size: 11px;
+      min-height: 24px;
+      padding: 4px 8px;
+    }
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--text-secondary);
+  
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 16px;
+  }
+}
